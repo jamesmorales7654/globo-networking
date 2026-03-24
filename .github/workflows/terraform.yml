@@ -1,0 +1,48 @@
+name: Terraform
+
+on: push
+
+env:
+  TF_LOG: INFO
+  TF_INPUT: false
+
+jobs:
+  terraform:
+    name: Terraform
+    runs-on: ubuntu-latest
+
+    # Always use bash for consistency across runners
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./
+
+    steps:
+      # Checkout repo to runner
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Install Terraform CLI (PIN VERSION for stability)
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.14.7
+
+      # Debug: confirm working directory + files
+      - name: Show files
+        run: |
+          pwd
+          ls -la
+
+      # Initialize Terraform (NO upgrade in CI for stability)
+      - name: Terraform Init
+        run: terraform init
+
+      # Enforce formatting (fails pipeline if incorrect)
+      - name: Terraform Format
+        run: terraform fmt -check
+
+      # Validate config even if fmt fails
+      - name: Terraform Validate
+        if: always()
+        run: terraform validate
