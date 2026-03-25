@@ -11,38 +11,37 @@ jobs:
     name: Terraform
     runs-on: ubuntu-latest
 
-    # Always use bash for consistency across runners
     defaults:
       run:
         shell: bash
-        working-directory: ./
+        working-directory: ./network_config   # ✅ FIXED
 
     steps:
-      # Checkout repo to runner
+      # Checkout repo
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Install Terraform CLI (PIN VERSION for stability)
+      # Install Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.14.7
 
-      # Debug: confirm working directory + files
+      # Debug (now shows correct folder)
       - name: Show files
         run: |
           pwd
           ls -la
 
-      # Initialize Terraform (NO upgrade in CI for stability)
+      # Init
       - name: Terraform Init
         run: terraform init
 
-      # Enforce formatting (fails pipeline if incorrect)
+      # Format check
       - name: Terraform Format
         run: terraform fmt -check
 
-      # Validate config even if fmt fails
+      # Validate
       - name: Terraform Validate
         if: always()
         run: terraform validate
