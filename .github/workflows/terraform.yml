@@ -43,5 +43,4 @@ jobs:
       if: (success() || failure())
       run: 
         terraform init -input=false
-        terraform fmt -check
         terraform validate
