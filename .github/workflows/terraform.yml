@@ -41,6 +41,6 @@ jobs:
     - name: Terraform Validate
       id: validate
       if: (success() || failure())
-      run: 
+      run: |
         terraform init -input=false
         terraform validate
